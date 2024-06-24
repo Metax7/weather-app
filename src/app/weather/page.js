@@ -7,13 +7,15 @@ export default function Weather() {
   const [city, setCity] = useState();
   const [days, setDays] = useState();
   const [data, setData] = useState([]);
+  const [isEmpty, setIsEmpty] = useState(true);
 
-  const searchCityValue = (e) => {
+  const cityValue = (e) => {
     const value = e.target.value;
     setCity(value);
+    setIsEmpty(!value);
   };
 
-  const searchDaysValue = (e) => {
+  const daysValue = (e) => {
     const value = e.target.value;
     setDays(value);
   };
@@ -26,7 +28,7 @@ export default function Weather() {
   const fetchData = () => {
     fetch(
       `https://api.weatherapi.com/v1/search.json?key=14f84a5f9dc64a54b4745010241306&q=${city}`,
-      requestOptions,
+      requestOptions
     )
       .then((response) => response.json())
       .then((result) => setData(result))
@@ -34,7 +36,7 @@ export default function Weather() {
   };
 
   const handleOnKeyDownSearch = (e) => {
-    if (e.keyCode === 13) {
+    if (e.keyCode === 13 && city) {
       fetchData();
     }
   };
@@ -49,21 +51,24 @@ export default function Weather() {
           <input
             type="text"
             placeholder="City"
-            onChange={searchCityValue}
+            onChange={cityValue}
             onKeyDown={handleOnKeyDownSearch}
             className="rounded-xl border p-3 shadow-xl outline-none focus:outline-0 focus:ring-0"
           />
           <input
             type="number"
-            onChange={searchDaysValue}
+            onChange={daysValue}
             onKeyDown={handleOnKeyDownSearch}
             className="rounded-xl border p-3 shadow-xl outline-none focus:outline-0 focus:ring-0"
             placeholder="Count of Days ( max: 10 )"
           />
         </div>
         <button
+          disabled={isEmpty}
           onClick={fetchData}
-          className="rounded-xl border bg-black px-5 py-2 text-white"
+          className={`rounded-xl border px-5 py-2 text-white ${
+            isEmpty ? "cursor-not-allowed bg-black/70" : "bg-black"
+          } transition-all duration-300`}
         >
           Search
         </button>
